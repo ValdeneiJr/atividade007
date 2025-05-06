@@ -1,15 +1,51 @@
-Saídas da atividade 007
-==========================
+Saídas da atividade 007 com código
+==============================
 
->>> Questão 01
+>>> Questão 01 - Código:
+def questao01():
+    with open("log.txt") as f:
+        linhas = f.readlines()
+    print("1) Total de linhas:", len(linhas))
+
+if __name__ == "__main__":
+    questao01()
+
+>>> Questão 01 - Saída:
 1) Total de linhas: 14
 
->>> Questão 02
+>>> Questão 02 - Código:
+def questao02():
+    with open("log.txt") as f:
+        for linha in f:
+            if "Accepted password" in linha:
+                print(linha.strip())
+
+if __name__ == "__main__":
+    questao02()
+
+>>> Questão 02 - Saída:
 Mar 07 10:15:32 server1 sshd[1024]: Accepted password for user1 from 192.168.1.10 port 54321 ssh2
 Mar 07 10:20:05 server1 sshd[1060]: Accepted password for admin from 192.168.1.12 port 54789 ssh2
 Mar 07 10:40:22 server1 sshd[1138]: Accepted password for user5 from 192.168.1.16 port 55100 ssh2
 
->>> Questão 03
+>>> Questão 03 - Código:
+import re
+
+def questao03():
+    with open("log.txt") as f:
+        ips = set()
+        for linha in f:
+            if "sshd" in linha:
+                match = re.search(r'from ([\d.]+)', linha)
+                if match:
+                    ips.add(match.group(1))
+    for ip in sorted(ips):
+        print(ip)
+
+if __name__ == "__main__":
+    questao03()
+
+>>> Questão 03 - Saída:
 192.168.1.10
 192.168.1.11
 192.168.1.12
@@ -17,20 +53,77 @@ Mar 07 10:40:22 server1 sshd[1138]: Accepted password for user5 from 192.168.1.1
 192.168.1.15
 192.168.1.16
 
->>> Questão 04
+>>> Questão 04 - Código:
+def questao04():
+    with open("log.txt") as f:
+        for linha in f:
+            if "Failed password" in linha:
+                print(linha.strip())
+
+if __name__ == "__main__":
+    questao04()
+
+>>> Questão 04 - Saída:
 Mar 07 10:18:07 server1 sshd[1055]: Failed password for user2 from 192.168.1.11 port 54632 ssh2
 Mar 07 10:25:50 server1 sshd[1101]: Failed password for root from 192.168.1.14 port 54987 ssh2
 Mar 07 10:33:05 server1 sshd[1125]: Failed password for user4 from 192.168.1.15 port 55023 ssh2
 
->>> Questão 05
+>>> Questão 05 - Código:
+def questao05():
+    with open("log.txt") as f:
+        linhas = f.readlines()
+    sucesso = sum("Accepted password" in l for l in linhas)
+    falha = sum("Failed password" in l for l in linhas)
+    print(f"Sucessos: {sucesso}")
+    print(f"Falhas: {falha}")
+
+if __name__ == "__main__":
+    questao05()
+
+>>> Questão 05 - Saída:
 Sucessos: 3
 Falhas: 3
 
->>> Questão 06
+>>> Questão 06 - Código:
+import re
+
+def questao06():
+    with open("log.txt") as f:
+        users = set()
+        for linha in f:
+            if "sudo" in linha:
+                match = re.search(r'sudo\[\d+\]: (\w+)', linha)
+                if match:
+                    users.add(match.group(1))
+    for u in sorted(users):
+        print(u)
+
+if __name__ == "__main__":
+    questao06()
+
+>>> Questão 06 - Saída:
 user2
 user3
 
->>> Questão 07
+>>> Questão 07 - Código:
+from datetime import datetime
+
+def questao07():
+    def get_dt(line):
+        try:
+            return datetime.strptime(" ".join(line.split()[:3]), "%b %d %H:%M:%S")
+        except:
+            return datetime.min
+
+    with open("log.txt") as f:
+        linhas = f.readlines()
+    for linha in sorted(linhas, key=get_dt):
+        print(linha.strip())
+
+if __name__ == "__main__":
+    questao07()
+
+>>> Questão 07 - Saída:
 Mar 07 10:15:32 server1 sshd[1024]: Accepted password for user1 from 192.168.1.10 port 54321 ssh2
 Mar 07 10:16:45 server1 systemd[1]: Started Apache Web Server.
 Mar 07 10:17:01 server1 cron[2048]: (root) CMD (/usr/bin/backup.sh)
@@ -46,13 +139,59 @@ Mar 07 10:40:22 server1 sshd[1138]: Accepted password for user5 from 192.168.1.1
 Mar 07 10:45:50 server1 systemd[1]: Stopped MySQL Database Server.
 Mar 07 10:50:30 server1 sudo[1156]: user2 : TTY=pts/1 ; PWD=/home/user2 ; USER=root ; COMMAND=/bin/cat /var/log/auth.log
 
->>> Questão 08
+>>> Questão 08 - Código:
+from collections import Counter
 
->>> Questão 09
+def questao08():
+    users = []
+    with open("log.txt") as f:
+        for linha in f:
+            if "Failed password" in linha:
+                user = linha.split("Failed password for ")[1].split()[0]
+                users.append(user)
+    for u, count in Counter(users).items():
+        if count > 1:
+            print(f"{u} ({count})")
+
+if __name__ == "__main__":
+    questao08()
+
+>>> Questão 08 - Saída:
+
+
+>>> Questão 09 - Código:
+def questao09():
+    with open("log.txt") as f:
+        for linha in f:
+            if "sudo" in linha and "COMMAND=" in linha:
+                print(linha.split("COMMAND=")[1].strip())
+
+if __name__ == "__main__":
+    questao09()
+
+>>> Questão 09 - Saída:
 /bin/ls
 /bin/cat /var/log/auth.log
 
->>> Questão 10
+>>> Questão 10 - Código:
+import re
+from collections import Counter
+
+def questao10():
+    ips = Counter()
+    with open("log.txt") as f:
+        for linha in f:
+            if "sshd" in linha:
+                match = re.search(r'from ([\d.]+)', linha)
+                if match:
+                    ips[match.group(1)] += 1
+    for ip, count in ips.most_common():
+        print(f"{ip} — {count}")
+
+if __name__ == "__main__":
+    questao10()
+
+>>> Questão 10 - Saída:
 192.168.1.10 — 1
 192.168.1.11 — 1
 192.168.1.12 — 1
